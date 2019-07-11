@@ -8,84 +8,50 @@
 #define MAX 1000000007
 using namespace std;
 
-struct UnionFind{
-	int *par;
-
-	UnionFind(int N){
-		par = (int *)malloc(N*sizeof(int));
-		rep(i,N)par[i]=i;
-	}
-
-	int root(int x){
-		if(par[x] == x)return x;
-		return par[x] =  root(par[x]);
-	}
-
-	void unite(int x, int y){
-		int rx = root(x);
-		int ry = root(y);
-		if(rx == ry)return;
-		if(rx < ry)par[ry]=rx;
-		else par[rx] = ry;
-	}
-
-	bool same(int x, int y){
-		return root(x) == root(y);
-	}
-};
 
 int main(void){
-	int N;
-	cin>>N;
-
-	bool flag[N], flag2[N];
-	rep(i,N)flag[N]=false;
-	rep(i,N)flag2[N]=false;
-	pair<int,pair<int,int> > in[N-1];
-
-	rep(i,N-1)cin>>in[i].first>>in[i].second.first>>in[i].second.second;
-	sort(in,in+N-1);
-	int idx[N];
-	idx[0]=0; idx[N-1]=N-1;
-	int tmp=1;
-	rep(i,N-2){
-		if(in[i].first != in[i+1].first)idx[in[i+1].first-1]=i+1;
+	int n;
+	cin>>n;
+	int w[n-1];
+	vector<vector<pair<int,int> > > tree(n);
+	rep(i,n){
+		int u,v,w;
+		pair<int,int> p;
+		cin>>u>>v>>w;
+		p.first=v-1;
+		p.second=w;
+		tree[u-1].push_back(p);
+		p.first=u-1;
+		tree[v-1].push_back(p);
 	}
+
+	int val[n];
+	rep(i,n)
+		val[i]=-1;
 	
+
 	queue<int> que;
+	val[0]=0;
+	que.push(0);
 
-
-	int current=0;
-	flag[current]=true;
-	rep(i,N-1){
-		for(int j=idx[current];j<idx[current+1];j++){
-			int next=in[j].second.first-1;
-			if(flag[next] == false){
-				flag[next] = true;
-				que.push(next);
-				//cout<<"push:"<<next<<endl;
-				if(in[j].second.second%2 == 0)flag2[next]=flag2[current];
-				else flag2[next]=!flag2[current];
+	while(!que.empty()){
+		int id=que.front();
+		que.pop();
+		rep(i,tree[id].size()){
+			if(val[tree[id][i].first] == -1){
+				que.push(tree[id][i].first);
+				if(tree[id][i].second%2==0){
+					if(val[id]==0)val[tree[id][i].first]=0;
+					else val[tree[id][i].first]=1;
+				}
+				else{
+					if(val[id]==1)val[tree[id][i].first]=0;
+					else val[tree[id][i].first]=1;
+				}
 			}
 		}
-		current=que.front();
-		que.pop();
-		if(current == N-1){
-			current=que.front();
-			que.pop();
-		}
-		//cout<<"pop:"<<current<<endl;
-		/*cout<<"iter:"<<i<<endl;
-		rep(i,N){
-			if(flag2[i])cout<<0<<endl;
-			else cout<<1<<endl;
-		}*/
-	}
-	rep(i,N){
-		if(flag2[i])cout<<1<<endl;
-		else cout<<0<<endl;
 	}
 
-
+	rep(i,n)cout<<val[i]<<endl;
 	return 0;
 }
