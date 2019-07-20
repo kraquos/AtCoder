@@ -8,30 +8,28 @@
 #define MAX 1000000007
 using namespace std;
 
-int main(void){
-	ll n,k;
-	cin>>n>>k;
-	ll a[n], max=0;
-	rep(i,n){
-		cin>>a[i];
-		if(a[i]>max)max=a[i];
-	}
-	ll bit=2,id=1;
-	while(bit<=k){
-		id++;
-		bit*=2;
-	}
-	for(i=0;i<100;i++){
-		rep(j,n){
-			if(a[j]%2==1){
-				cnt1++;
-				w[i][1]-=1;
-			}
-			else w[i][0]++;
-			a[j]/=2;
-		}
+vector<ll> num(55),p(55);
 
+ll rec(int level, ll x){
+	if(level == 0)return 1;//LEVEL0バーガー
+	if(x == 1)return 0;//下のバン
+	else if(x < (num[level]+1)/2)return rec(level-1,x-1);//下のL-1バーガー
+	else if(x == (num[level]+1)/2)return p[level-1]+1;//真ん中のパティ
+	else if(x < num[level])return rec(level-1,x-(num[level]+1)/2)+p[level-1]+1;//上のL-1バーガー
+	else return p[level];//上のバン
+}
+
+int main(void){
+	ll n,x;
+	cin>>n>>x;
+
+	num[0]=1;
+	p[0]=1;
+	rep(i,n){
+		num[i+1]=2*num[i]+3;
+		p[i+1]=2*p[i]+1;
 	}
-	cout<<endl;
+
+	cout<<rec(n,x)<<endl;
 	return 0;
 }
