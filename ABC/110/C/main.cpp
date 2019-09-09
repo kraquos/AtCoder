@@ -14,45 +14,33 @@ using namespace std;
 int main(void){
 	string s,t;
 	cin>>s>>t;
-
-	vector<pair<char,int> > work1,work2;
-
+	int trans[26];
+	int nums[26],numt[26];
+	rep(i,26){
+		trans[i]=-1;
+		nums[i]=0;
+		numt[i]=0;
+	}
+	
+	bool ans=true;
 	rep(i,s.length()){
-		bool flag=true;
-		int k=0;
-		while(k<work1.size() && flag){
-			if(work1[k].first == s[i]){
-				work1[k].second++;
-				flag=false;
-			}
+		int ids=s[i]-'0'-49,idt=t[i]-'0'-49;
+		if(trans[ids] == -1)trans[ids]=idt;
+		else if(trans[ids] != idt){
+			ans=false;
+			break;
 		}
-
-		if(flag){
-			pair<char,int> tmp;
-			tmp.first=s[i];
-			tmp.second=1;
-			work1.push_back(tmp);
-		}
-	}
-	rep(i,t.length()){
-		bool flag=true;
-		int k=0;
-		while(k<work2.size() && flag){
-			if(work2[k].first == t[i]){
-				work2[k].second++;
-				flag=false;
-			}
-		}
-
-		if(flag){
-			pair<char,int> tmp;
-			tmp.first=t[i];
-			tmp.second=1;
-		}
-		work2.push_back(tmp);
+		nums[ids]++;
+		numt[idt]++;
 	}
 
-	rep(i,)
+	sort(nums,nums+26);
+	sort(numt,numt+26);
+	rep(i,26){
+		if(nums[i] != numt[i])ans=false;
+	}
+	if(ans)cout<<"Yes"<<endl;
+	else cout<<"No"<<endl;
 	return 0;
 
 }
